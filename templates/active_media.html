@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+
+{% block title %}Active Media - hellpine.xyz{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --pink-primary: #ff006e;
+        --pink-secondary: #ff1493;
+        --pink-light: #ff69b4;
+        --red-primary: #dc143c;
+        --red-dark: #8b0000;
+        --black-primary: #0a0a0a;
+        --black-secondary: #1a1a1a;
+        --black-tertiary: #2a2a2a;
+        --gray-dark: #333333;
+        --gray-light: #4a4a4a;
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--black-primary) 0%, var(--black-secondary) 50%, var(--black-tertiary) 100%);
+        color: #ffffff;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--pink-primary) 0%, var(--red-primary) 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(255, 0, 110, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .page-header h1 {
+        color: #ffffff;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin: 0;
+    }
+
+    .page-header p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0.5rem 0 0 0;
+    }
+
+    .card-modern {
+        background: var(--black-secondary);
+        border: 1px solid var(--gray-dark);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 48px rgba(255, 0, 110, 0.2);
+        border-color: var(--pink-primary);
+    }
+
+    .card-header-modern {
+        background: linear-gradient(135deg, var(--pink-primary) 0%, var(--red-primary) 100%);
+        color: #ffffff;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .card-body-modern {
+        background: var(--black-secondary);
+        padding: 1.5rem;
+        color: #ffffff;
+    }
+
+    .form-control-modern {
+        background: var(--black-tertiary);
+        border: 1px solid var(--gray-dark);
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-modern:focus {
+        background: var(--black-tertiary);
+        border-color: var(--pink-primary);
+        color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(255, 0, 110, 0.25);
+        outline: none;
+    }
+
+    .form-control-modern::placeholder {
+        color: var(--gray-light);
+    }
+
+    .form-label-modern {
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-modern {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--pink-primary) 0%, var(--red-primary) 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, var(--pink-secondary) 0%, var(--red-primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 0, 110, 0.6);
+        color: #ffffff;
+    }
+
+    .btn-success-modern {
+        background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+        color: var(--black-primary);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+    }
+
+    .btn-success-modern:hover {
+        background: linear-gradient(135deg, #00ff99 0%, #00dd7a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 255, 136, 0.6);
+        color: var(--black-primary);
+    }
+
+    .btn-danger-modern {
+        background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+    }
+
+    .btn-danger-modern:hover {
+        background: linear-gradient(135deg, #e02050 0%, #9b0000 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 20, 60, 0.6);
+        color: #ffffff;
+    }
+
+    .btn-info-modern {
+        background: linear-gradient(135deg, #00bfff 0%, #0080ff 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4);
+    }
+
+    .btn-info-modern:hover {
+        background: linear-gradient(135deg, #20cfff 0%, #0090ff 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 191, 255, 0.6);
+        color: #ffffff;
+    }
+
+    .table-modern {
+        background: var(--black-tertiary);
+        color: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    .table-modern thead {
+        background: linear-gradient(135deg, var(--pink-primary) 0%, var(--red-primary) 100%);
+        color: #ffffff;
+    }
+
+    .table-modern thead th {
+        border: none;
+        padding: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .table-modern tbody tr {
+        border-bottom: 1px solid var(--gray-dark);
+        transition: all 0.2s ease;
+    }
+
+    .table-modern tbody tr:hover {
+        background: var(--black-secondary);
+        transform: scale(1.01);
+    }
+
+    .table-modern tbody td {
+        border: none;
+        padding: 1rem;
+        color: #ffffff;
+        vertical-align: middle;
+    }
+
+    .badge-modern {
+        padding: 0.5em 0.9em;
+        font-weight: 600;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        border: 1px solid transparent;
+    }
+
+    .badge-success-modern {
+        background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+        color: var(--black-primary);
+    }
+
+    .badge-warning-modern {
+        background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+        color: var(--black-primary);
+    }
+
+    .badge-danger-modern {
+        background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+        color: #ffffff;
+    }
+
+    .badge-info-modern {
+        background: linear-gradient(135deg, #00bfff 0%, #0080ff 100%);
+        color: #ffffff;
+    }
+
+    .badge-secondary-modern {
+        background: var(--gray-dark);
+        color: #ffffff;
+    }
+
+    .progress-modern {
+        height: 25px;
+        background: var(--black-tertiary);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--gray-dark);
+    }
+
+    .progress-bar-modern {
+        height: 100%;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: width 0.6s ease;
+    }
+
+    .progress-bar-success {
+        background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+        color: var(--black-primary);
+    }
+
+    .progress-bar-warning {
+        background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+        color: var(--black-primary);
+    }
+
+    .progress-bar-danger {
+        background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+        color: #ffffff;
+    }
+
+    .text-muted-modern {
+        color: var(--gray-light) !important;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--gray-light);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--pink-primary);
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="bi bi-discord"></i> Active Media</h1>
+    <p>Manage media accounts with video quota tracking</p>
+</div>
+
+<div class="card-modern">
+    <div class="card-header-modern">
+        <i class="bi bi-plus-circle"></i> Add Active Media
+    </div>
+    <div class="card-body-modern">
+        <form id="addMediaForm">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="discordAccountId" class="form-label-modern">Discord Account ID</label>
+                    <input type="text" class="form-control form-control-modern" id="discordAccountId" placeholder="Discord user ID" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="weeklyQuota" class="form-label-modern">Weekly Quota (videos)</label>
+                    <input type="number" class="form-control form-control-modern" id="weeklyQuota" value="2" min="1" required>
+                    <small class="text-muted-modern">Default: 2 videos per week</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="days" class="form-label-modern">Subscription Days</label>
+                    <input type="number" class="form-control form-control-modern" id="days" value="30" min="1" required>
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-modern btn-primary-modern w-100">
+                        <i class="bi bi-plus-circle"></i> Add
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card-modern">
+    <div class="card-header-modern">
+        <i class="bi bi-list"></i> Active Media List
+    </div>
+    <div class="card-body-modern">
+        {% if media_list %}
+        <div class="table-responsive">
+            <table class="table table-modern">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Discord Account ID</th>
+                        <th>Weekly Quota</th>
+                        <th>Videos Completed</th>
+                        <th>Progress</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for media in media_list %}
+                    {% set time_diff = (media.end_date - now).total_seconds() %}
+                    {% set is_expired = time_diff <= 0 %}
+                    {% set expires_soon = time_diff <= 86400 and time_diff > 0 %}
+                    {% set quota_progress = (media.videos_completed / media.weekly_quota * 100) if media.weekly_quota > 0 else 0 %}
+                    {% set quota_status = 'success' if media.videos_completed >= media.weekly_quota else ('warning' if media.videos_completed > 0 else 'danger') %}
+                    <tr style="{% if is_expired %}background: rgba(220, 20, 60, 0.1);{% elif expires_soon %}background: rgba(255, 170, 0, 0.1);{% endif %}">
+                        <td><strong>{{ media.id }}</strong></td>
+                        <td><strong>{{ media.discord_account_id }}</strong></td>
+                        <td>{{ media.weekly_quota }}</td>
+                        <td>
+                            <span class="badge-modern badge-{{ quota_status }}-modern">{{ media.videos_completed }}</span>
+                        </td>
+                        <td>
+                            <div class="progress-modern">
+                                <div class="progress-bar-modern progress-bar-{{ quota_status }}" 
+                                     style="width: {{ quota_progress }}%">
+                                    {{ media.videos_completed }}/{{ media.weekly_quota }}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ media.start_date.strftime('%d.%m.%Y') }}</td>
+                        <td>{{ media.end_date.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>
+                            {% if is_expired %}
+                                <span class="badge-modern badge-danger-modern">Expired</span>
+                            {% elif expires_soon %}
+                                <span class="badge-modern badge-warning-modern">Expiring Soon</span>
+                            {% else %}
+                                <span class="badge-modern badge-success-modern">Active</span>
+                            {% endif %}
+                            {% if media.bonus_days > 0 %}
+                                <span class="badge-modern badge-info-modern">+{{ media.bonus_days }} bonus</span>
+                            {% endif %}
+                            {% if media.notified %}
+                                <span class="badge-modern badge-secondary-modern">Notified</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column gap-1">
+                                <button class="btn btn-modern btn-success-modern btn-sm" onclick="addVideo({{ media.id }})" title="Add completed video">
+                                    <i class="bi bi-plus-circle"></i> +Video
+                                </button>
+                                {% if not media.notified and (is_expired or expires_soon) %}
+                                <button class="btn btn-modern btn-info-modern btn-sm" onclick="markNotified({{ media.id }})">
+                                    <i class="bi bi-check-circle"></i> Mark Notified
+                                </button>
+                                {% endif %}
+                                <button class="btn btn-modern btn-danger-modern btn-sm" onclick="deleteMedia({{ media.id }})">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>No active media. Add your first entry above.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('addMediaForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const discordAccountId = document.getElementById('discordAccountId').value;
+    const weeklyQuota = document.getElementById('weeklyQuota').value;
+    const days = document.getElementById('days').value;
+    
+    try {
+        const response = await fetch('/api/active-media/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                discord_account_id: discordAccountId, 
+                weekly_quota: parseInt(weeklyQuota),
+                days: parseInt(days)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Media successfully added!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error adding media');
+        console.error(error);
+    }
+});
+
+async function addVideo(id) {
+    try {
+        const response = await fetch(`/api/active-media/add-video/${id}`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`Video added! Progress: ${data.videos_completed}/${data.weekly_quota}`);
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error adding video');
+        console.error(error);
+    }
+}
+
+async function deleteMedia(id) {
+    if (!confirm('Are you sure you want to delete this entry?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/active-media/delete/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Media deleted');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error deleting media');
+        console.error(error);
+    }
+}
+
+async function markNotified(id) {
+    try {
+        const response = await fetch(`/api/active-media/mark-notified/${id}`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Marked as notified');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('Error updating status');
+        console.error(error);
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation - eresir24.onrender.com{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="fw-bold"><i class="bi bi-code-square"></i> API Documentation</h1>
+        <p class="text-muted">Complete API reference for eresir24.onrender.com - Easy to understand guide for GameSense/Lua developers</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info shadow-sm">
+            <h5><i class="bi bi-lightbulb"></i> Quick Start</h5>
+            <p class="mb-0"><strong>Public API:</strong> Config endpoints are available without authentication. Perfect for Lua/GameSense scripts!</p>
+            <ul class="mb-0 mt-2">
+                <li><code>POST /api/config/add</code> - Add or update config</li>
+                <li><code>GET /api/configs</code> - Get all configs with content (NEW!)</li>
+                <li><code>GET /api/config/&lt;name&gt;</code> - Get config by name</li>
+            </ul>
+            <p class="mb-0 mt-2"><strong>Admin API:</strong> All other endpoints require admin authentication through the web interface.</p>
+            <p class="mb-0 mt-2"><strong><i class="bi bi-shield-check"></i> Rate Limiting:</strong> Public API endpoints have rate limiting - maximum 1 request per 2 seconds per IP address.</p>
+            <p class="mb-0 mt-2"><strong><i class="bi bi-book"></i> GameSense Docs:</strong> <a href="https://docs.gamesense.gs/" target="_blank">docs.gamesense.gs</a> - full documentation for http library</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-success shadow-sm">
+            <h5><i class="bi bi-code-slash"></i> For GameSense/Lua Developers</h5>
+            <p class="mb-0">Use the <code>gamesense/http</code> library to interact with the API. Only config endpoints are public - everything else requires admin access.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-primary"><i class="bi bi-cloud"></i> Cloud Config API</h3>
+                <small class="text-muted">Public API - No authentication required</small>
+            </div>
+            <div class="card-body">
+                <div class="mb-5">
+                    <h4 class="text-primary mb-3"><i class="bi bi-plus-circle"></i> 1. Add or Update Config</h4>
+                    <div class="bg-light p-3 rounded mb-3 border-start border-primary border-4">
+                        <code class="text-primary fs-5">POST /api/config/add</code>
+                    </div>
+                    
+                    <p class="lead"><strong>What it does:</strong> Saves your config to the server. If config with same name already exists, it will be updated automatically.</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong><i class="bi bi-exclamation-triangle"></i> Important:</strong> You need to send JSON data with two fields: <code>name</code> and <code>config_data</code>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-clock-history"></i> Rate Limiting:</strong> Maximum 1 request per 2 seconds per IP address. If exceeded, you'll receive HTTP 429 with retry-after time.
+                    </div>
+                    
+                    <h5 class="mt-4">What to Send (Request):</h5>
+                    <p>Send a POST request with JSON body containing:</p>
+                    <ul>
+                        <li><code>name</code> - The name of your config (like "myconfig" or "server1")</li>
+                        <li><code>config_data</code> - The actual content of your config (can be JSON, YAML, text, anything)</li>
+                    </ul>
+                    
+                    <pre class="bg-dark text-light p-4 rounded"><code>{
+  "name": "myconfig",
+  "config_data": "your config content here\ncan be multiple lines\nanything you want"
+}</code></pre>
+                    
+                    <h5 class="mt-4">What You Get (Response):</h5>
+                    <p>If successful, you'll get:</p>
+                    <pre class="bg-success bg-opacity-10 p-4 rounded border border-success"><code>{
+  "success": true,
+  "message": "Config successfully added"
+}</code></pre>
+                    
+                    <p>If config already exists, you'll get:</p>
+                    <pre class="bg-info bg-opacity-10 p-4 rounded border border-info"><code>{
+  "success": true,
+  "message": "Config successfully updated"
+}</code></pre>
+                    
+                    <h5 class="mt-4">Examples:</h5>
+                    
+                    <div class="mb-3">
+                        <strong class="text-success"><i class="bi bi-code-slash"></i> Using Lua/GameSense (http library):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>local http = require("gamesense/http")
+local json = require("gamesense/json")
+
+local config_name = "myconfig"
+local config_data = "your config content here"
+
+http.post("https://eresir24.onrender.com/api/config/add", {
+    headers = {["Content-Type"] = "application/json"},
+    body = json.stringify({name = config_name, config_data = config_data})
+}, function(success, response)
+    if success then
+        local data = json.parse(response.body)
+        if data.success then
+            print("Config saved:", data.message)
+        end
+    end
+end)</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using cURL:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>curl -X POST https://eresir24.onrender.com/api/config/add \
+  -H "Content-Type: application/json" \
+  -d '{"name": "myconfig", "config_data": "config content here"}'</code></pre>
+                    </div>
+                </div>
+                
+                <hr class="my-5">
+                
+                <div class="mb-5">
+                    <h4 class="text-info mb-3"><i class="bi bi-list-ul"></i> 2. Get All Configs</h4>
+                    <div class="bg-light p-3 rounded mb-3 border-start border-info border-4">
+                        <code class="text-info fs-5">GET /api/configs</code>
+                    </div>
+                    
+                    <p class="lead"><strong>What it does:</strong> Gets a list of ALL configs with their names and content.</p>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-clock-history"></i> Rate Limiting:</strong> Maximum 1 request per 2 seconds per IP address.
+                    </div>
+                    
+                    <h5 class="mt-4">What You Get:</h5>
+                    <pre class="bg-dark text-light p-4 rounded"><code>[
+  {
+    "name": "config1",
+    "content": "config content here...",
+    "created_at": "2026-02-03T14:00:00",
+    "updated_at": "2026-02-03T15:00:00"
+  }
+]</code></pre>
+                    
+                    <h5 class="mt-4">Examples:</h5>
+                    <div class="mb-3">
+                        <strong>Using Lua/GameSense:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>local http = require("gamesense/http")
+local json = require("gamesense/json")
+
+http.get("https://eresir24.onrender.com/api/configs", function(success, response)
+    if success then
+        local configs = json.parse(response.body)
+        for i, config in ipairs(configs) do
+            print(config.name .. ":", config.content)
+        end
+    end
+end)</code></pre>
+                    </div>
+                </div>
+                
+                <hr class="my-5">
+                
+                <div class="mb-5">
+                    <h4 class="text-success mb-3"><i class="bi bi-download"></i> 3. Get Config by Name</h4>
+                    <div class="bg-light p-3 rounded mb-3 border-start border-success border-4">
+                        <code class="text-success fs-5">GET /api/config/&lt;config_name&gt;</code>
+                    </div>
+                    
+                    <p class="lead"><strong>What it does:</strong> Gets your saved config content as plain text.</p>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-clock-history"></i> Rate Limiting:</strong> Maximum 1 request per 2 seconds per IP address.
+                    </div>
+                    
+                    <h5 class="mt-4">Examples:</h5>
+                    <div class="mb-3">
+                        <strong>Using Lua/GameSense:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>local http = require("gamesense/http")
+local config_name = "myconfig"
+
+http.get("https://eresir24.onrender.com/api/config/" .. config_name, function(success, response)
+    if success then
+        local config_content = response.body
+        print("Config loaded:", config_content)
+    end
+end)</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using cURL:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>curl https://eresir24.onrender.com/api/config/myconfig</code></pre>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <strong>Errors:</strong>
+                        <ul class="mb-0">
+                            <li>If config doesn't exist: <code>{"error": "Config not found"}</code> (HTTP 404)</li>
+                            <li>If rate limit exceeded: <code>{"error": "Rate limit exceeded", "retry_after": 2}</code> (HTTP 429)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-info"><i class="bi bi-discord"></i> Active Media API</h3>
+                <small class="text-danger"><i class="bi bi-lock"></i> <strong>Admin Only</strong></small>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong>Admin Only:</strong> These endpoints require admin authentication through the web interface.
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-warning"><i class="bi bi-info-circle"></i> Important Notes</h3>
+            </div>
+            <div class="card-body">
+                <h5>Public API (Lua/GameSense):</h5>
+                <ul>
+                    <li>Public endpoints: <code>POST /api/config/add</code>, <code>GET /api/configs</code>, <code>GET /api/config/&lt;name&gt;</code></li>
+                    <li>All public endpoints support CORS</li>
+                    <li>Config names must be unique</li>
+                    <li>Rate limiting: 1 request per 2 seconds per IP</li>
+                    <li>Use <code>gamesense/http</code> library - <a href="https://docs.gamesense.gs/" target="_blank">docs.gamesense.gs</a></li>
+                </ul>
+                
+                <h5 class="mt-4">Reserved Names:</h5>
+                <p>You cannot use these names: <code>cloud-config</code>, <code>cloud-configs</code>, <code>active-media</code>, <code>admins</code>, <code>add</code>, <code>configs</code></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
