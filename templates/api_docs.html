@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation - hellpine.hgweb.ru{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="fw-bold"><i class="bi bi-code-square"></i> API Documentation</h1>
+        <p class="text-muted">Complete API reference for hellpine.hgweb.ru - Easy to understand guide</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info shadow-sm">
+            <h5><i class="bi bi-lightbulb"></i> Quick Start</h5>
+            <p class="mb-0"><strong>Public API:</strong> Only config endpoints (<code>/api/config/add</code> and <code>/api/config/&lt;name&gt;</code>) are available without authentication. Perfect for Lua/GameSense scripts!</p>
+            <p class="mb-0 mt-2"><strong>Admin API:</strong> All other endpoints require admin authentication through the web interface.</p>
+            <p class="mb-0 mt-2"><strong><i class="bi bi-shield-check"></i> Rate Limiting:</strong> Public API endpoints have rate limiting - maximum 1 request per 10 seconds per IP address.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-success shadow-sm">
+            <h5><i class="bi bi-code-slash"></i> For GameSense/Lua Developers</h5>
+            <p class="mb-0">Use the <code>gamesense/http</code> library to interact with the API. Only config endpoints are public - everything else requires admin access.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Cloud Config API -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-primary"><i class="bi bi-cloud"></i> Cloud Config API</h3>
+                <small class="text-muted">Public API - No authentication required</small>
+            </div>
+            <div class="card-body">
+                <!-- Add Config -->
+                <div class="mb-5">
+                    <h4 class="text-primary mb-3"><i class="bi bi-plus-circle"></i> 1. Add or Update Config</h4>
+                    <div class="bg-light p-3 rounded mb-3 border-start border-primary border-4">
+                        <code class="text-primary fs-5">POST /api/config/add</code>
+                    </div>
+                    
+                    <p class="lead"><strong>What it does:</strong> Saves your config to the server. If config with same name already exists, it will be updated automatically.</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong><i class="bi bi-exclamation-triangle"></i> Important:</strong> You need to send JSON data with two fields: <code>name</code> and <code>config_data</code>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-clock-history"></i> Rate Limiting:</strong> Maximum 1 request per 10 seconds per IP address. If exceeded, you'll receive HTTP 429 with retry-after time.
+                    </div>
+                    
+                    <h5 class="mt-4">?? What to Send (Request):</h5>
+                    <p>Send a POST request with JSON body containing:</p>
+                    <ul>
+                        <li><code>name</code> - The name of your config (like "myconfig" or "server1")</li>
+                        <li><code>config_data</code> - The actual content of your config (can be JSON, YAML, text, anything)</li>
+                    </ul>
+                    
+                    <pre class="bg-dark text-light p-4 rounded"><code>{
+  "name": "myconfig",
+  "config_data": "your config content here\ncan be multiple lines\nanything you want"
+}</code></pre>
+                    
+                    <h5 class="mt-4">?? What You Get (Response):</h5>
+                    <p>If successful, you'll get:</p>
+                    <pre class="bg-success bg-opacity-10 p-4 rounded border border-success"><code>{
+  "success": true,
+  "message": "Config successfully added"
+}</code></pre>
+                    
+                    <p>If config already exists, you'll get:</p>
+                    <pre class="bg-info bg-opacity-10 p-4 rounded border border-info"><code>{
+  "success": true,
+  "message": "Config successfully updated"
+}</code></pre>
+                    
+                    <h5 class="mt-4">?? Examples:</h5>
+                    
+                    <div class="mb-3">
+                        <strong class="text-success"><i class="bi bi-code-slash"></i> Using Lua/GameSense (http library):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>-- Add or update config
+local http = require("gamesense/http")
+
+local config_name = "myconfig"
+local config_data = "your config content here"
+
+http.post("https://hellpine.hgweb.ru/api/config/add", {
+    headers = {
+        ["Content-Type"] = "application/json"
+    },
+    body = json.stringify({
+        name = config_name,
+        config_data = config_data
+    })
+}, function(success, response)
+    if success then
+        local data = json.parse(response.body)
+        print("Config saved:", data.message)
+    else
+        print("Error:", response.error)
+    end
+end)</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using cURL (command line):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>curl -X POST https://hellpine.hgweb.ru/api/config/add \
+  -H "Content-Type: application/json" \
+  -d '{"name": "myconfig", "config_data": "config content here"}'</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using JavaScript (fetch):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>fetch('https://hellpine.hgweb.ru/api/config/add', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'myconfig',
+    config_data: 'your config content'
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using Python (requests):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>import requests
+
+response = requests.post('https://hellpine.hgweb.ru/api/config/add', json={
+    'name': 'myconfig',
+    'config_data': 'your config content'
+})
+
+print(response.json())</code></pre>
+                    </div>
+                </div>
+                
+                <hr class="my-5">
+                
+                <!-- Get Config -->
+                <div class="mb-5">
+                    <h4 class="text-success mb-3"><i class="bi bi-download"></i> 2. Get Config by Name</h4>
+                    <div class="bg-light p-3 rounded mb-3 border-start border-success border-4">
+                        <code class="text-success fs-5">GET /api/config/&lt;config_name&gt;</code>
+                    </div>
+                    
+                    <p class="lead"><strong>What it does:</strong> Gets your saved config content. Just provide the config name and you'll get the content back as plain text.</p>
+                    
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-clock-history"></i> Rate Limiting:</strong> Maximum 1 request per 10 seconds per IP address. If exceeded, you'll receive HTTP 429 with retry-after time.
+                    </div>
+                    
+                    <h5 class="mt-4">?? What to Send:</h5>
+                    <p>Just make a GET request to the URL with your config name:</p>
+                    <ul>
+                        <li>Replace <code>&lt;config_name&gt;</code> with your actual config name</li>
+                        <li>Example: If your config is named "myconfig", use: <code>/api/config/myconfig</code></li>
+                    </ul>
+                    
+                    <h5 class="mt-4">?? What You Get:</h5>
+                    <p>You'll receive the config content as plain text (not JSON, just the raw content you saved).</p>
+                    
+                    <h5 class="mt-4">?? Examples:</h5>
+                    
+                    <div class="mb-3">
+                        <strong class="text-success"><i class="bi bi-code-slash"></i> Using Lua/GameSense (http library):</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>-- Get config by name
+local http = require("gamesense/http")
+
+local config_name = "myconfig"
+
+http.get("https://hellpine.hgweb.ru/api/config/" .. config_name, function(success, response)
+    if success then
+        local config_content = response.body
+        print("Config content:", config_content)
+        -- Use config_content here (it's plain text)
+        -- You can parse it if it's JSON, Lua table, etc.
+    else
+        print("Error:", response.error)
+    end
+end)
+
+-- Alternative: Synchronous version (blocks until response)
+local response = http.get("https://hellpine.hgweb.ru/api/config/" .. config_name)
+if response then
+    local config_content = response.body
+    print("Config loaded:", config_content)
+end</code></pre>
+                        <p class="text-muted"><strong>Note:</strong> Returns plain text content, not JSON. Use it directly or parse if needed.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using cURL:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>curl https://hellpine.hgweb.ru/api/config/myconfig</code></pre>
+                        <p class="text-muted">This will output the config content directly to your terminal</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using JavaScript:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>fetch('https://hellpine.hgweb.ru/api/config/myconfig')
+  .then(response => response.text())
+  .then(data => {
+    console.log('Config content:', data);
+    // Use the config data here
+  });</code></pre>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Using Python:</strong>
+                        <pre class="bg-dark text-light p-3 rounded"><code>import requests
+
+response = requests.get('https://hellpine.hgweb.ru/api/config/myconfig')
+config_content = response.text
+print(config_content)</code></pre>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <strong><i class="bi bi-x-circle"></i> Errors:</strong>
+                        <ul class="mb-0">
+                            <li>If config doesn't exist: <code>{"error": "Config not found"}</code> (HTTP 404)</li>
+                            <li>If rate limit exceeded: <code>{"error": "Rate limit exceeded", "message": "Please wait X seconds...", "retry_after": 10}</code> (HTTP 429)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Media API -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-info"><i class="bi bi-discord"></i> Active Media API</h3>
+                <small class="text-danger"><i class="bi bi-lock"></i> <strong>Admin Only</strong> - Requires admin authentication through web interface</small>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong><i class="bi bi-shield-lock"></i> Admin Only:</strong> These endpoints are <strong>NOT</strong> available for public use. They require admin authentication through the web interface. Use only config endpoints (<code>/api/config/add</code> and <code>/api/config/&lt;name&gt;</code>) from your Lua scripts.
+                </div>
+                
+                <h4 class="mt-3"><i class="bi bi-plus-circle"></i> Add Active Media</h4>
+                <div class="bg-light p-3 rounded mb-3">
+                    <code class="text-primary">POST /api/active-media/add</code>
+                </div>
+                
+                <p><strong>What it does:</strong> Adds a Discord account subscription tracking entry.</p>
+                
+                <h5>Request Body:</h5>
+                <pre class="bg-dark text-light p-3 rounded"><code>{
+  "discord_account_id": "123456789012345678",
+  "user_days": "username|30"
+}</code></pre>
+                
+                <p><strong>Fields explanation:</strong></p>
+                <ul>
+                    <li><code>discord_account_id</code> - Discord user ID (the number, not username)</li>
+                    <li><code>user_days</code> - Format: <code>"username|days"</code> where days is the subscription duration</li>
+                </ul>
+                
+                <h5>Response:</h5>
+                <pre class="bg-dark text-light p-3 rounded"><code>{
+  "success": true,
+  "message": "Media added",
+  "id": 1
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Admin API -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-success"><i class="bi bi-list-check"></i> Admin API</h3>
+                <small class="text-danger"><i class="bi bi-lock"></i> <strong>Admin Only</strong> - Requires admin authentication through web interface</small>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong><i class="bi bi-shield-lock"></i> Admin Only:</strong> These endpoints are <strong>NOT</strong> available for public use. They require admin authentication through the web interface. Use only config endpoints from your Lua scripts.
+                </div>
+                
+                <h4 class="mt-3"><i class="bi bi-list"></i> Get All Configs</h4>
+                <div class="bg-light p-3 rounded mb-3">
+                    <code class="text-primary">GET /api/cloud-configs</code>
+                </div>
+                <p>Returns list of all configs with full details (ID, name, content, dates).</p>
+                
+                <h4 class="mt-3"><i class="bi bi-eye"></i> Get Config by ID</h4>
+                <div class="bg-light p-3 rounded mb-3">
+                    <code class="text-primary">GET /api/cloud-config/&lt;id&gt;</code>
+                </div>
+                <p>Get full config details by its ID number.</p>
+                
+                <h4 class="mt-3"><i class="bi bi-pencil"></i> Update Config</h4>
+                <div class="bg-light p-3 rounded mb-3">
+                    <code class="text-primary">PUT /api/cloud-config/update/&lt;id&gt;</code>
+                </div>
+                <p>Update existing config by ID.</p>
+                
+                <h4 class="mt-3"><i class="bi bi-trash"></i> Delete Config</h4>
+                <div class="bg-light p-3 rounded mb-3">
+                    <code class="text-primary">DELETE /api/cloud-config/delete/&lt;id&gt;</code>
+                </div>
+                <p>Delete config by ID.</p>
+            </div>
+        </div>
+
+        <!-- Important Notes -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-0 py-3">
+                <h3 class="mb-0 fw-bold text-warning"><i class="bi bi-info-circle"></i> Important Notes & Tips</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-check-circle text-success"></i> Public API (Lua/GameSense):</h5>
+                        <ul>
+                            <li>? <strong>Only config endpoints are public:</strong> <code>/api/config/add</code> and <code>/api/config/&lt;name&gt;</code></li>
+                            <li>? All public endpoints support CORS (you can use them from any website/Lua script)</li>
+                            <li>? Config names must be unique</li>
+                            <li>? If you add a config with existing name, it will be updated automatically</li>
+                            <li>? Config content can be anything: JSON, YAML, text, Lua code, etc.</li>
+                            <li>? When getting config, you receive only the content (plain text)</li>
+                            <li>? Use <code>gamesense/http</code> library in your Lua scripts</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-x-circle text-danger"></i> Reserved Names:</h5>
+                        <p>You cannot use these names for your configs:</p>
+                        <ul>
+                            <li><code>cloud-config</code></li>
+                            <li><code>cloud-configs</code></li>
+                            <li><code>active-media</code></li>
+                            <li><code>admins</code></li>
+                            <li><code>add</code></li>
+                        </ul>
+                        <p class="text-muted">These are system endpoints and will return 404 if used as config names.</p>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <h5><i class="bi bi-question-circle text-primary"></i> Common Questions:</h5>
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                How do I add a config?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Send a POST request to <code>/api/config/add</code> with JSON body containing <code>name</code> and <code>config_data</code>. See examples above!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                How do I get my config back?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Make a GET request to <code>/api/config/your_config_name</code>. You'll get the content as plain text.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Can I update a config?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! Just use the same <code>/api/config/add</code> endpoint with the same name. It will automatically update the existing config.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                What format should config_data be?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Any format! JSON, YAML, plain text, Lua code, configuration files - anything you want. The API stores it as-is and returns it exactly as you saved it.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                Can I use this API from Lua/GameSense scripts?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! Use the <code>gamesense/http</code> library. Only config endpoints (<code>/api/config/add</code> and <code>/api/config/&lt;name&gt;</code>) are available publicly. All other endpoints require admin authentication through the web interface.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                Which endpoints can I use from Lua scripts?
+                            </button>
+                        </h2>
+                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <strong>Public endpoints (no auth required):</strong><br>
+                                 <code>POST /api/config/add</code> - Add or update config<br>
+                                 <code>GET /api/config/&lt;name&gt;</code> - Get config by name<br><br>
+                                <strong>All other endpoints require admin authentication</strong> and are only available through the web interface.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
