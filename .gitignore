@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+instance/
+site.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# FTP upload scripts (temporary)
+ftp_upload.txt
+ftp_commands.txt
+
+# Environment variables
+.env
+.env.local
+
+# Upload scripts (not needed on GitHub)
+upload.bat
+upload_ps.ps1
+upload_to_ftp.bat
+upload_to_ftp_advanced.bat
+
+# Documentation (optional - можно оставить или удалить)
+*.md
+!README.md
+
+# Migration scripts (optional)
+migrate_db.py
